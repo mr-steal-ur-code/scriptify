@@ -1,53 +1,72 @@
-# Use Node.js 18 Alpine for smaller image size
+# -----------------------------
+# Base image with node and libc
+# -----------------------------
 FROM node:18-alpine AS base
 
-# Install dependencies only when needed
-FROM base AS deps
-RUN apk add --no-cache libc6-compat
+# Install needed system packages
+RUN apk add --no-cache libc6-compat openssl
+
 WORKDIR /app
 
-# Install dependencies based on the preferred package manager
+# -----------------------------
+# Dependencies stage
+# -----------------------------
+FROM base AS deps
+
+# Copy lock files to install only dependencies
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+COPY prisma ./prisma/
+
+# Install dependencies depending on lock file
 RUN \
-  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
+  if [ -f yarn.lock ]; then yarn install --frozen-lockfile; \
   elif [ -f package-lock.json ]; then npm ci; \
-  elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i --frozen-lockfile; \
-  else echo "Lockfile not found." && exit 1; \
+  elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm install --frozen-lockfile; \
+  else echo "No lockfile found." && exit 1; \
   fi
 
-# Rebuild the source code only when needed
+# -----------------------------
+# Builder stage
+# -----------------------------
 FROM base AS builder
-WORKDIR /app
+
+# Copy installed deps from previous stage
 COPY --from=deps /app/node_modules ./node_modules
+
+# Copy rest of the app
 COPY . .
 
-# Build the application
+# Generate Prisma client (if using Prisma)
+RUN npx prisma generate
+
+# Build Next.js app
 RUN yarn build
 
-# Production image, copy all the files and run next
-FROM base AS runner
+# -----------------------------
+# Production runtime image
+# -----------------------------
+FROM node:18-alpine AS runner
+
 WORKDIR /app
 
-ENV NODE_ENV production
+ENV NODE_ENV=production
+ENV PORT=3131
+ENV HOSTNAME="0.0.0.0"
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs \
+  && adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/public ./public
+# Copy public assets
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
-# Set the correct permission for prerender cache
-RUN mkdir .next
-RUN chown nextjs:nodejs .next
-
-# Automatically leverage output traces to reduce image size
+# Copy standalone output
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+# Use non-root user
 USER nextjs
 
-EXPOSE 3000
-
-ENV PORT 3000
-ENV HOSTNAME "0.0.0.0"
+EXPOSE 3131
 
 CMD ["node", "server.js"]
