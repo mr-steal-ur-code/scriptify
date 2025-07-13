@@ -1,6 +1,6 @@
-import { getUsers, createUser, searchUsers } from '@/lib/users'
-import { CreateUserInput } from '@/types/user'
-import { NextRequest } from 'next/server'
+import { getUsers, createUser, searchUsers, getUserByEmail } from '@/lib/users'
+import type { CreateUserInput } from '@/types/user'
+import type { NextRequest } from 'next/server'
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url!)
@@ -8,6 +8,15 @@ export async function GET(req: NextRequest) {
   const page = parseInt(searchParams.get('page') || '1', 10)
   const limit = parseInt(searchParams.get('limit') || '10', 10)
   const q = searchParams.get('q')
+  const email = searchParams.get('email')
+
+  if (email && email.trim() !== '') {
+    const user = await getUserByEmail(email)
+    if (!user) {
+      return new Response(JSON.stringify({ error: 'User not found' }), { status: 404 })
+    }
+    return new Response(JSON.stringify(user), { status: 200 })
+  }
 
   if (q && q.trim() !== '') {
     const users = await searchUsers(q)

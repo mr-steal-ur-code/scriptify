@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
 	return (
@@ -12,6 +13,7 @@ export default function Home() {
 					height={38}
 					priority
 				/>
+				<Link href="/admin">Admin Page</Link>
 			</main>
 			<footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
 				A Kutsolutions project
