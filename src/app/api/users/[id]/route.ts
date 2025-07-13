@@ -2,7 +2,7 @@ import { deleteUser, getUserById, updateUser } from '@/lib/users'
 import type { UpdateUserInput } from '@/types/user'
 import type { NextRequest } from 'next/server'
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: any) {
   const { id } = params
 
   const user = await getUserById(id)
@@ -14,7 +14,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   return new Response(JSON.stringify(user), { status: 200 })
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params }: any) {
   const { id } = params
 
   if (!id) {
@@ -28,7 +28,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   return new Response(JSON.stringify(updatedUser), { status: 200 })
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: any) {
   const { id } = params
 
   if (!id) {

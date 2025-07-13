@@ -3,7 +3,9 @@ const nextConfig = {
   // Fixed: moved from experimental.serverComponentsExternalPackages
   serverExternalPackages: ['@prisma/client'],
   output: 'standalone',
-
+  images: {
+    domains: ['i.pravatar.cc'],
+  },
   // Add this to fix CSS loading in Docker
   trailingSlash: false,
 
