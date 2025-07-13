@@ -50,7 +50,7 @@ FROM node:18-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV PORT=3131
+ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
 # Create non-root user
@@ -67,6 +67,6 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 # Use non-root user
 USER nextjs
 
-EXPOSE 3131
+EXPOSE 3000
 
 CMD ["node", "server.js"]
