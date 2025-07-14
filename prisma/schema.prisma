@@ -17,17 +17,14 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
+  user              User    @relation(fields: [userId], references: [id])
 }
 
 model Session {
@@ -35,19 +32,31 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id])
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String    @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id             String     @id @default(cuid())
+  name           String?
+  email          String?    @unique
+  image          String?
+  role           String     @default("free")
+  hashedPassword String?
+  progress       Progress[]
+  accounts       Account[]
+  sessions       Session[]
+  emailVerified  DateTime?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+}
+
+model Progress {
+  id        String  @id @default(cuid())
+  userId    String
+  courseId  String
+  lessonId  String
+  completed Boolean @default(false)
+  user      User    @relation(fields: [userId], references: [id])
 }
 
 model VerificationToken {
