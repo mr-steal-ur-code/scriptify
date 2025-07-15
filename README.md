@@ -1,36 +1,104 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+🚀 Scriptify
 
-## Getting Started
+Scriptify is an interactive learning platform designed to help you master JavaScript through guided lessons, coding challenges, and real-world projects.
 
-First, run the development server:
+Built with Next.js, Prisma, and NextAuth, Scriptify provides a modern, secure, and scalable foundation for learning and experimenting with JavaScript in the browser.
 
-```bash
+🧑‍💻 Tech Stack
+
+Next.js — Framework for React and SSR/SSG support.
+
+React 19 — Latest React features and improvements.
+
+Prisma — Type-safe ORM for database access (PostgreSQL on AWS RDS).
+
+NextAuth — Secure authentication with support for multiple OAuth providers.
+
+Tailwind CSS — Utility-first CSS framework for styling (planned or included).
+
+AWS Amplify — Deployment and hosting, with CI/CD support.
+
+AWS RDS PostgreSQL — Production-ready relational database.
+
+💡 Features
+
+✅ User authentication with Google and GitHub. ✅ User profile images and account linking✅ Secure database-backed session management (Prisma adapter)✅ Modern, performant frontend with React and Next.js✅ Flexible architecture ready for lesson content, coding challenges, and live preview
+
+⚙️ Setup & Development
+
+1️⃣ Clone the repo
+
+git clone https://github.com/mr-steal-ur-code/scriptify.git
+cd scriptify
+
+2️⃣ Install dependencies
+
+npm install
+
+# or
+
+yarn install
+
+3️⃣ Configure environment variables
+
+Create a .env.local file:
+
+DATABASE_URL="your_postgres_connection_string"
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="your_generated_secret"
+
+GITHUB_CLIENT_ID="your_github_client_id"
+GITHUB_CLIENT_SECRET="your_github_client_secret"
+
+GOOGLE_CLIENT_ID="your_google_client_id"
+GOOGLE_CLIENT_SECRET="your_google_client_secret"
+
+⚠️ Replace placeholders with your actual values.
+
+4️⃣ Run database migrations
+
+npx prisma migrate deploy
+
+Or, for local dev:
+
+npm run db:migrate
+
+5️⃣ Start development server
+
 npm run dev
+
 # or
+
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then visit http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+🗄️ Database
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Uses PostgreSQL (hosted on AWS RDS).
 
-## Learn More
+Prisma schema manages migrations and models.
 
-To learn more about Next.js, take a look at the following resources:
+Auth-related tables (User, Account, Session, etc.) are automatically created and managed by Prisma and NextAuth.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+🌟 Future Plans
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Interactive JavaScript coding playground
 
-## Deploy on Vercel
+Gamified challenges and achievements
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Lesson progress tracking
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Personalized learning paths
+
+Community sharing and peer review
+
+🛡️ License
+
+MIT — free to use and modify.
+
+✉️ Contact
+
+For issues, feature requests, or contributions, open an issue or reach out via cj@kutsolutions.com.
+
+Scriptify — Code your way to mastery. 🚀✨
