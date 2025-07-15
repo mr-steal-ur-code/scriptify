@@ -1,72 +1,74 @@
-# -----------------------------
-# Base image with node and libc
-# -----------------------------
+# ----------------------------------------
+# Base image with Node.js and system libs
+# ----------------------------------------
 FROM node:18-alpine AS base
 
-# Install needed system packages
+# Install compatibility libraries needed for some node modules (e.g., Prisma)
 RUN apk add --no-cache libc6-compat openssl
 
+# Set the working directory
 WORKDIR /app
 
-# -----------------------------
-# Dependencies stage
-# -----------------------------
+# ----------------------------------------
+# Install dependencies separately (deps stage)
+# ----------------------------------------
 FROM base AS deps
 
-# Copy lock files to install only dependencies
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+# Copy package files for npm install
+COPY package.json package-lock.json ./
 COPY prisma ./prisma/
 
-# Install dependencies depending on lock file
-RUN \
-  if [ -f yarn.lock ]; then yarn install --frozen-lockfile; \
-  elif [ -f package-lock.json ]; then npm ci; \
-  elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm install --frozen-lockfile; \
-  else echo "No lockfile found." && exit 1; \
-  fi
+# Install dependencies using npm ci for reproducible builds
+RUN npm ci
 
-# -----------------------------
-# Builder stage
-# -----------------------------
+# ----------------------------------------
+# Build the application (builder stage)
+# ----------------------------------------
 FROM base AS builder
 
-# Copy installed deps from previous stage
+# Copy installed node_modules from deps stage
 COPY --from=deps /app/node_modules ./node_modules
 
-# Copy rest of the app
+# Copy all other application files
 COPY . .
 
-# Generate Prisma client (if using Prisma)
+# Generate Prisma client code
 RUN npx prisma generate
 
-# Build Next.js app
-RUN yarn build
+# Build the Next.js application
+RUN npm run build
 
-# -----------------------------
-# Production runtime image
-# -----------------------------
+# ----------------------------------------
+# Prepare final production image (runner)
+# ----------------------------------------
 FROM node:18-alpine AS runner
 
+# Set working directory
 WORKDIR /app
 
+# Set environment variables
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Create non-root user
+# Create a non-root user for better security
 RUN addgroup --system --gid 1001 nodejs \
   && adduser --system --uid 1001 nextjs
 
 # Copy public assets
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
-# Copy standalone output
+# Copy standalone server build output
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+
+# Copy static files
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Use non-root user
+# Use the non-root user
 USER nextjs
 
+# Expose the app port
 EXPOSE 3000
 
+# Start the server using Next.js standalone server.js
 CMD ["node", "server.js"]

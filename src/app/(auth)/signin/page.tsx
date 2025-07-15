@@ -1,36 +1,20 @@
-"use client";
+import { getProviders } from "next-auth/react";
+import { LoginButtons } from "@/components/auth/LoginButtons";
 
-import { getProviders, signIn } from "next-auth/react";
-import { useEffect, useState } from "react";
-
-export default function SignInPage() {
-	const [providers, setProviders] = useState<any>(null);
-
-	useEffect(() => {
-		const setUpProviders = async () => {
-			const res = await getProviders();
-			setProviders(res);
-		};
-		setUpProviders();
-	}, []);
-
-	if (!providers) {
-		return <p>Loading...</p>;
-	}
+export default async function SignInPage() {
+	const providers = (await getProviders()) || {};
 
 	return (
-		<div className="p-8 text-center">
-			<h1 className="text-2xl mb-4">Sign in to your account</h1>
-			{Object.values(providers).map((provider: any) => (
-				<div key={provider.name} className="mb-2">
-					<button
-						onClick={() => signIn(provider.id)}
-						className="px-4 py-2 bg-black text-white rounded"
-					>
-						Sign in with {provider.name}
-					</button>
-				</div>
-			))}
+		<div className="flex flex-col items-center my-auto">
+			<section className="w-full max-w-md rounded-xl shadow p-8">
+				<h1 className="text-3xl font-bold mb-6 text-center">
+					Welcome to Scriptify
+				</h1>
+				<p className="text-center mb-8 text-gray-600">
+					Sign in to continue learning and mastering JavaScript
+				</p>
+				<LoginButtons providers={providers} />
+			</section>
 		</div>
 	);
 }

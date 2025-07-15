@@ -32,11 +32,11 @@ export default function RootLayout({
 				className={`${geistSans.variable} ${geistMono.variable} antialiased h-full flex flex-col`}
 			>
 				<Providers>
-					<header className="sticky top-0 z-50 bg-white shadow-md py-4 px-6 flex justify-between items-center flex-shrink-0">
+					<header className="sticky top-0 z-50 bg-white shadow-md py-4 px-6 flex flex-row justify-between">
 						<Link href="/" className="text-xl font-bold text-gray-800">
 							Scriptify
 						</Link>
-						<nav>
+						<nav className="flex items-center">
 							<Link
 								href="/admin"
 								className="text-gray-600 hover:text-black mr-4"
