@@ -2,6 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import Image from "next/image";
 
 export function Avatar() {
 	const { data: session } = useSession();
@@ -9,10 +10,12 @@ export function Avatar() {
 	if (session?.user) {
 		return (
 			<Link href="/profile" className="flex items-center gap-2">
-				<img
+				<Image
+					width={48}
+					height={48}
 					src={session.user.image ?? "/default-avatar.png"}
 					alt={session.user.name ?? "User"}
-					className="w-10 h-10 rounded-full"
+					className="w-12 h-12 rounded-full"
 				/>
 			</Link>
 		);
