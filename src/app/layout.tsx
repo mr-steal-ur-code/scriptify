@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Link from "next/link";
-import { Avatar } from "@/components/auth/Avatar";
-import { Providers } from "./providers";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { AuthProvider } from "./AuthProvider";
+import Header from "@/components/Header";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -21,36 +22,25 @@ export const metadata: Metadata = {
 		"Interactive JavaScript learning platform to master modern JS with hands-on exercises and challenges.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
+	const session = await getServerSession(authOptions);
+
 	return (
 		<html lang="en" className="h-full">
 			<body
 				className={`${geistSans.variable} ${geistMono.variable} antialiased h-full flex flex-col`}
 			>
-				<Providers>
-					<header className="sticky top-0 z-50 bg-white shadow-md py-4 px-6 flex flex-row justify-between">
-						<Link href="/" className="text-xl font-bold text-gray-800">
-							Scriptify
-						</Link>
-						<nav className="flex items-center">
-							<Link
-								href="/admin"
-								className="text-gray-600 hover:text-black mr-4"
-							>
-								Admin Page
-							</Link>
-							<Avatar />
-						</nav>
-					</header>
+				<AuthProvider session={session}>
+					<Header />
 					<main className="flex-1 flex flex-col">{children}</main>
 					<footer className="py-4 text-center text-gray-500 flex-shrink-0">
-						A Kutsolutions project
+						&copy; {new Date().getFullYear()} Scriptify
 					</footer>
-				</Providers>
+				</AuthProvider>
 			</body>
 		</html>
 	);
