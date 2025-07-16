@@ -1,7 +1,4 @@
-# ----------------------------------------
-# Base image with Node.js and system libs
-# ----------------------------------------
-FROM node:18-alpine AS base
+FROM node:18-alpine
 
 # Install compatibility libraries needed for some node modules (e.g., Prisma)
 RUN apk add --no-cache libc6-compat openssl
@@ -9,66 +6,26 @@ RUN apk add --no-cache libc6-compat openssl
 # Set the working directory
 WORKDIR /app
 
-# ----------------------------------------
-# Install dependencies separately (deps stage)
-# ----------------------------------------
-FROM base AS deps
-
-# Copy package files for npm install
-COPY package.json package-lock.json ./
-COPY prisma ./prisma/
-
-# Install dependencies using npm ci for reproducible builds
-RUN npm ci
-
-# ----------------------------------------
-# Build the application (builder stage)
-# ----------------------------------------
-FROM base AS builder
-
-# Copy installed node_modules from deps stage
-COPY --from=deps /app/node_modules ./node_modules
-
-# Copy all other application files
-COPY . .
-
-# Generate Prisma client code
-RUN npx prisma generate
-
-# Build the Next.js application
-RUN npm run build
-
-# ----------------------------------------
-# Prepare final production image (runner)
-# ----------------------------------------
-FROM node:18-alpine AS runner
-
-# Set working directory
-WORKDIR /app
-
-# Set environment variables
-ENV NODE_ENV=production
+# Set environment to development
+ENV NODE_ENV=development
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Create a non-root user for better security
-RUN addgroup --system --gid 1001 nodejs \
-  && adduser --system --uid 1001 nextjs
+# Copy package files for npm install
+COPY package.json package-lock.json ./
 
-# Copy public assets
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+# Copy Prisma schema and seed file
+COPY prisma ./prisma/
 
-# Copy standalone server build output
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+# Install ALL dependencies (including devDependencies for development)
+RUN npm ci
 
-# Copy static files
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-# Use the non-root user
-USER nextjs
+# Copy all application files
+COPY . .
 
 # Expose the app port
 EXPOSE 3000
 
-# Start the server using Next.js standalone server.js
-CMD ["node", "server.js"]
+# Default command runs the development server
+# You can override this in docker-compose to run setup-db.sh first
+CMD ["npm", "run", "dev"]
