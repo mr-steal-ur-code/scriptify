@@ -11,6 +11,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ==================== Enums ====================
+
+enum ProgressStatus {
+  not_started
+  in_progress
+  completed
+}
+
+enum Difficulty {
+  easy
+  medium
+  hard
+}
+
+// ==================== Models ====================
+
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -38,27 +54,79 @@ model Session {
 }
 
 model User {
-  id             String     @id @default(cuid())
+  id             String    @id @default(cuid())
   name           String?
-  email          String?    @unique
+  email          String?   @unique
   image          String?
-  role           String     @default("free")
+  role           String    @default("free")
   hashedPassword String?
-  progress       Progress[]
-  accounts       Account[]
-  sessions       Session[]
   emailVerified  DateTime?
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  accounts  Account[]
+  sessions  Session[]
+  progress  Progress[]
+  solutions Solution[]
 }
 
 model Progress {
-  id        String  @id @default(cuid())
-  userId    String
-  courseId  String
-  lessonId  String
-  completed Boolean @default(false)
-  user      User    @relation(fields: [userId], references: [id])
+  id          String         @id @default(cuid())
+  userId      String
+  lessonId    String?
+  challengeId String?
+  status      ProgressStatus @default(not_started)
+  updatedAt   DateTime       @updatedAt
+
+  user      User       @relation(fields: [userId], references: [id])
+  lesson    Lesson?    @relation(fields: [lessonId], references: [id])
+  challenge Challenge? @relation(fields: [challengeId], references: [id])
+}
+
+model Lesson {
+  id          String @id @default(cuid())
+  title       String
+  description String
+  content     String
+  order       Int
+
+  progress   Progress[]
+  challenges Challenge[]
+}
+
+model Challenge {
+  id          String     @id @default(cuid())
+  lessonId    String?
+  title       String
+  prompt      String
+  starterCode String
+  difficulty  Difficulty
+  order       Int
+
+  lesson    Lesson?    @relation(fields: [lessonId], references: [id])
+  progress  Progress[]
+  testCases TestCase[]
+  solutions Solution[]
+}
+
+model TestCase {
+  id             String @id @default(cuid())
+  challengeId    String
+  input          String
+  expectedOutput String
+
+  challenge Challenge @relation(fields: [challengeId], references: [id])
+}
+
+model Solution {
+  id          String   @id @default(cuid())
+  userId      String
+  challengeId String
+  code        String
+  createdAt   DateTime @default(now())
+
+  user      User      @relation(fields: [userId], references: [id])
+  challenge Challenge @relation(fields: [challengeId], references: [id])
 }
 
 model VerificationToken {
