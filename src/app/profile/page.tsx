@@ -1,9 +1,9 @@
-import { LogoutButton } from "@/components/auth/LogoutButton";
+import { SignoutButton } from "@/components/auth/SignoutButton";
 
 export default function ProfilePage() {
 	return (
 		<div>
-			<LogoutButton />
+			<SignoutButton />
 			<h1>Profile</h1>
 		</div>
 	);

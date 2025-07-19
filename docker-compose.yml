@@ -15,23 +15,42 @@ services:
       timeout: 5s
       retries: 5
 
-  app:
+  prisma-init:
     build:
       context: .
     env_file:
       - .env.local
-    ports:
-      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/my_local_db
     depends_on:
       db:
         condition: service_healthy
     command: >
       sh -c "
+        echo '🌱 Initializing Prisma (generate, push, seed)...' &&
         npm run db:generate &&
         npm run db:push &&
         npm run db:seed &&
-        npm run dev
+        echo '✅ Prisma setup complete.'
       "
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+  app:
+    build:
+      context: .
+    env_file:
+      - .env.local
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/my_local_db
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+      prisma-init:
+        condition: service_completed_successfully
     volumes:
       - .:/app
       - /app/node_modules

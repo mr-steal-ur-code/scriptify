@@ -1,29 +1,36 @@
 "use client";
 
-import { signIn } from "next-auth/react";
+import { ClientSafeProvider, getProviders, signIn } from "next-auth/react";
 import Image from "next/image";
-
-type Provider = {
-	id: string;
-	name: string;
-};
-
-interface LoginButtonsProps {
-	providers: Record<string, Provider>;
-}
+import { useEffect, useState } from "react";
 
 const providerLogos: Record<string, string> = {
 	github: "/icons/github.svg",
 	google: "/icons/google.svg",
 };
 
-export function LoginButtons({ providers }: LoginButtonsProps) {
+export function SigninButtons() {
+	const [providers, setProviders] = useState<Record<
+		string,
+		ClientSafeProvider
+	> | null>(null);
+
+	useEffect(() => {
+		getProviders().then(setProviders);
+	}, []);
+
+	if (!providers)
+		return (
+			<div className="flex justify-center items-center py-8">
+				<div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-500"></div>
+			</div>
+		);
 	return (
 		<div className="flex flex-col gap-4">
 			{Object.values(providers).map((provider) => (
 				<button
 					key={provider?.id}
-					onClick={() => signIn(provider?.id)}
+					onClick={() => signIn(provider?.id, { callbackUrl: "/" })}
 					type="button"
 					aria-label={`Sign in with ${provider?.name}`}
 					className={`cursor-pointer w-full flex items-center justify-center gap-3 py-3 px-4 rounded-md font-semibold transition-colors duration-200 ${

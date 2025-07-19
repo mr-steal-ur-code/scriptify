@@ -12,9 +12,10 @@
     "db:migrate": "dotenv -e .env.local -- prisma migrate dev",
     "db:studio": "dotenv -e .env.local -- prisma studio",
     "db:seed": "dotenv -e .env.local -- tsx prisma/seed.ts",
-    "docker:build": "docker build -t scriptify .",
-    "docker:run": "docker run -p 3000:3000 scriptify",
-    "docker:dev": "docker-compose up --build",
+    "docker:build": "docker-compose build",
+    "docker:db": "docker-compose up -d db prisma-init",
+    "docker:app": "docker-compose up --build",
+    "docker:down": "docker-compose down -v",
     "postinstall": "prisma generate"
   },
   "dependencies": {
