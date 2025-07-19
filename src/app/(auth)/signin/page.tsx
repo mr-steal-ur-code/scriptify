@@ -1,9 +1,6 @@
-import { getProviders } from "next-auth/react";
-import { LoginButtons } from "@/components/auth/LoginButtons";
+import { SigninButtons } from "@/components/auth/SigninButtons";
 
 export default async function SignInPage() {
-	const providers = (await getProviders()) || {};
-
 	return (
 		<div className="flex flex-col items-center my-auto">
 			<section className="w-full max-w-md rounded-xl shadow p-8">
@@ -13,7 +10,7 @@ export default async function SignInPage() {
 				<p className="text-center mb-8 text-gray-600">
 					Sign in to continue learning and mastering JavaScript
 				</p>
-				<LoginButtons providers={providers} />
+				<SigninButtons />
 			</section>
 		</div>
 	);
