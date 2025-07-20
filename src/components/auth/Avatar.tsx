@@ -1,11 +1,10 @@
-"use client";
-
-import { useSession } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
-export function Avatar() {
-	const { data: session } = useSession();
+export async function Avatar() {
+	const session = await getServerSession(authOptions);
 
 	if (session?.user) {
 		return (
