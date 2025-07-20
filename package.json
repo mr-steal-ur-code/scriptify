@@ -9,7 +9,7 @@
     "lint": "next lint",
     "db:generate": "dotenv -e .env.local -- prisma generate",
     "db:push": "dotenv -e .env.local -- prisma db push",
-    "db:migrate": "dotenv -e .env.local -- prisma migrate dev",
+    "db:migrate": "dotenv -e .env.local -- prisma migrate dev --name $npm_config_name",
     "db:studio": "dotenv -e .env.local -- prisma studio",
     "db:seed": "dotenv -e .env.local -- tsx prisma/seed.ts",
     "docker:build": "docker-compose build",

@@ -25,6 +25,12 @@ enum Difficulty {
   hard
 }
 
+enum Language {
+  javascript
+  python
+  typescript
+}
+
 // ==================== Models ====================
 
 model Account {
@@ -83,26 +89,42 @@ model Progress {
   challenge Challenge? @relation(fields: [challengeId], references: [id])
 }
 
+model Track {
+  id          String      @id @default(cuid())
+  name        String
+  slug        String      @unique
+  language    Language
+  description String?
+  order       Int
+  lessons     Lesson[]
+  challenges  Challenge[]
+}
+
 model Lesson {
   id          String @id @default(cuid())
+  trackId     String
   title       String
   description String
   content     String
   order       Int
 
+  track      Track       @relation(fields: [trackId], references: [id])
   progress   Progress[]
   challenges Challenge[]
 }
 
 model Challenge {
   id          String     @id @default(cuid())
+  trackId     String
   lessonId    String?
   title       String
   prompt      String
   starterCode String
   difficulty  Difficulty
   order       Int
+  language    Language
 
+  track     Track      @relation(fields: [trackId], references: [id])
   lesson    Lesson?    @relation(fields: [lessonId], references: [id])
   progress  Progress[]
   testCases TestCase[]
