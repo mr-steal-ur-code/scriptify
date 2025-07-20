@@ -9,7 +9,10 @@ export function Avatar() {
 
 	if (session?.user) {
 		return (
-			<Link href="/profile" className="flex items-center gap-2">
+			<Link
+				href={`/profile/${session?.user?.id}`}
+				className="flex items-center gap-2"
+			>
 				<Image
 					width={48}
 					height={48}
