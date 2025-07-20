@@ -31,6 +31,15 @@ enum Language {
   typescript
 }
 
+enum Paradigm {
+  declarative
+  functional
+  imperative
+  logic
+  object_oriented
+  procedural
+}
+
 // ==================== Models ====================
 
 model Account {
@@ -60,20 +69,20 @@ model Session {
 }
 
 model User {
-  id             String    @id @default(cuid())
+  id             String     @id @default(cuid())
   name           String?
-  email          String?   @unique
+  email          String?    @unique
   image          String?
-  role           String    @default("free")
+  role           String     @default("free")
   hashedPassword String?
   emailVerified  DateTime?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-
-  accounts  Account[]
-  sessions  Session[]
-  progress  Progress[]
-  solutions Solution[]
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  tracks         Track[]    @relation("UserTracks")
+  accounts       Account[]
+  sessions       Session[]
+  progress       Progress[]
+  solutions      Solution[]
 }
 
 model Progress {
@@ -96,8 +105,10 @@ model Track {
   language    Language
   description String?
   order       Int
+  users       User[]      @relation("UserTracks")
   lessons     Lesson[]
   challenges  Challenge[]
+  paradigms   Paradigm[]
 }
 
 model Lesson {

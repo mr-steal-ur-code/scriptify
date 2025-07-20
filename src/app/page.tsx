@@ -1,31 +1,47 @@
+import { TrackCard } from "@/components/TrackCard";
+import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import Link from "next/link";
+import { getServerSession } from "next-auth";
 
 export default async function Home() {
+	const session = await getServerSession(authOptions);
+	const userId = session?.user.id;
+
 	const tracks = await prisma.track.findMany({
 		orderBy: { order: "asc" },
+		include: {
+			_count: {
+				select: {
+					lessons: true,
+					challenges: true,
+				},
+			},
+			users: {
+				where: {
+					id: userId,
+				},
+			},
+		},
 	});
 
 	return (
-		<main className="container mx-auto p-6">
+		<div className="container mx-auto p-6">
 			<h1 className="text-3xl font-bold mb-6">All Tracks</h1>
 			<div className="grid md:grid-cols-2 gap-6">
 				{tracks.map((track) => (
-					<div
+					<TrackCard
+						track={{
+							...track,
+							count: {
+								lessons: track?._count?.lessons,
+								challenges: track?._count?.challenges,
+							},
+							users: track?.users,
+						}}
 						key={track?.id}
-						className="p-6 border rounded shadow hover:shadow-lg transition"
-					>
-						<h2 className="text-xl font-semibold mb-2">{track?.name}</h2>
-						<p className="mb-4">{track?.description}</p>
-						<Link
-							href={`/track/${track?.id}`}
-							className="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-						>
-							View Lessons
-						</Link>
-					</div>
+					/>
 				))}
 			</div>
-		</main>
+		</div>
 	);
 }

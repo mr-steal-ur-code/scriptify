@@ -47,6 +47,7 @@ npm install
 ### 2. Environment Setup
 
 You'll need a `.env.local` file for local development. Reach out to a maintainer for the environment variables, or we'll send them to you directly when onboarding.
+For reference, see .env.example for the required variable format
 
 ### 3. Create a New Branch
 
