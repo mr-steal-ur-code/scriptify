@@ -7,7 +7,7 @@ export default async function SignInPage() {
 				<h1 className="text-3xl font-bold mb-6 text-center">
 					Welcome to Scriptify
 				</h1>
-				<p className="text-center mb-8 text-gray-600">
+				<p className="text-center mb-8 text-gray-400">
 					Sign in to continue learning and mastering JavaScript
 				</p>
 				<SigninButtons />
