@@ -1,0 +1,164 @@
+[
+  {
+    "id": "cmdgmwyzl0001pg545j3h0523",
+    "name": "TypeScript",
+    "slug": "typescript",
+    "language": "typescript",
+    "description": "Learn TypeScript from the ground up!",
+    "order": 1,
+    "paradigms": [
+      "declarative",
+      "functional",
+      "object_oriented"
+    ],
+    "lessons": [
+      {
+        "id": "cmdgmwyzp0003pg54qk6goodc",
+        "trackId": "cmdgmwyzl0001pg545j3h0523",
+        "title": "Variables and Constants",
+        "description": "Introduction to let, const, and var",
+        "content": "\nIn this lesson, you'll learn how to declare variables using `let` and `const`.\n      ",
+        "order": 1
+      },
+      {
+        "id": "cmdgmwyzr0005pg54iuaehxcg",
+        "trackId": "cmdgmwyzl0001pg545j3h0523",
+        "title": "Functions",
+        "description": "Learn how to write functions in TypeScript.",
+        "content": "\nIn this lesson, you'll define and call functions using TypeScript syntax.\n      ",
+        "order": 2
+      }
+    ],
+    "challenges": [
+      {
+        "id": "cmdgmwyzu0007pg54iv2ovpje",
+        "trackId": "cmdgmwyzl0001pg545j3h0523",
+        "lessonId": "cmdgmwyzp0003pg54qk6goodc",
+        "title": "Declare a variable",
+        "prompt": "Declare a variable called `greeting` with the value \"Hello, world!\"",
+        "starterCode": "// your code here",
+        "difficulty": "easy",
+        "order": 1,
+        "language": "typescript",
+        "testCases": [
+          {
+            "id": "cmdgmwyzu0008pg54cjgt20dk",
+            "challengeId": "cmdgmwyzu0007pg54iv2ovpje",
+            "input": "",
+            "expectedOutput": "Hello, world!"
+          }
+        ]
+      },
+      {
+        "id": "cmdgmwz01000dpg54mgdcfkn2",
+        "trackId": "cmdgmwyzl0001pg545j3h0523",
+        "lessonId": "cmdgmwyzr0005pg54iuaehxcg",
+        "title": "Write a function",
+        "prompt": "Write a function `add(a, b)` that returns the sum of a and b.",
+        "starterCode": "function add(a: number, b: number) {\n  // your code here\n}",
+        "difficulty": "medium",
+        "order": 1,
+        "language": "typescript",
+        "testCases": [
+          {
+            "id": "cmdgmwz01000epg54i7bf5vin",
+            "challengeId": "cmdgmwz01000dpg54mgdcfkn2",
+            "input": "2, 3",
+            "expectedOutput": "5"
+          }
+        ]
+      },
+      {
+        "id": "cmdgmwyzy000apg54ckzmp7rx",
+        "trackId": "cmdgmwyzl0001pg545j3h0523",
+        "lessonId": "cmdgmwyzp0003pg54qk6goodc",
+        "title": "Use const keyword",
+        "prompt": "Use `const` to declare a variable `pi` with the value 3.14.",
+        "starterCode": "// your code here",
+        "difficulty": "easy",
+        "order": 2,
+        "language": "typescript",
+        "testCases": [
+          {
+            "id": "cmdgmwyzy000bpg54yralh46k",
+            "challengeId": "cmdgmwyzy000apg54ckzmp7rx",
+            "input": "",
+            "expectedOutput": "3.14"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "cmdgmwz04000fpg54jmwdbebx",
+    "name": "JavaScript",
+    "slug": "javascript",
+    "language": "javascript",
+    "description": "Master JavaScript fundamentals and beyond.",
+    "order": 2,
+    "paradigms": [
+      "imperative",
+      "functional",
+      "object_oriented",
+      "procedural"
+    ],
+    "lessons": [
+      {
+        "id": "cmdgmwz07000hpg549yorqxq4",
+        "trackId": "cmdgmwz04000fpg54jmwdbebx",
+        "title": "Basic Syntax",
+        "description": "Learn JavaScript syntax basics including variables and data types.",
+        "content": "\nThis lesson covers variables (var, let, const), data types, and simple expressions.\n      ",
+        "order": 1
+      },
+      {
+        "id": "cmdgmwz09000jpg544limbfpy",
+        "trackId": "cmdgmwz04000fpg54jmwdbebx",
+        "title": "Control Flow",
+        "description": "If statements, loops, and conditional logic in JavaScript.",
+        "content": "\nYou will learn about `if`, `else`, `switch`, `for`, and `while` loops.\n      ",
+        "order": 2
+      }
+    ],
+    "challenges": [
+      {
+        "id": "cmdgmwz0c000lpg54cyh4veee",
+        "trackId": "cmdgmwz04000fpg54jmwdbebx",
+        "lessonId": "cmdgmwz07000hpg549yorqxq4",
+        "title": "Declare a variable with var",
+        "prompt": "Declare a variable named `name` using `var` and assign it your name.",
+        "starterCode": "// your code here",
+        "difficulty": "easy",
+        "order": 1,
+        "language": "javascript",
+        "testCases": [
+          {
+            "id": "cmdgmwz0c000mpg54zr5wp477",
+            "challengeId": "cmdgmwz0c000lpg54cyh4veee",
+            "input": "",
+            "expectedOutput": "Your Name"
+          }
+        ]
+      },
+      {
+        "id": "cmdgmwz0f000opg54jarbh41b",
+        "trackId": "cmdgmwz04000fpg54jmwdbebx",
+        "lessonId": "cmdgmwz09000jpg544limbfpy",
+        "title": "Write a for loop",
+        "prompt": "Write a `for` loop that counts from 1 to 5 and logs each number.",
+        "starterCode": "// your code here",
+        "difficulty": "medium",
+        "order": 1,
+        "language": "javascript",
+        "testCases": [
+          {
+            "id": "cmdgmwz0f000ppg548yrj6kjq",
+            "challengeId": "cmdgmwz0f000opg54jarbh41b",
+            "input": "",
+            "expectedOutput": "1\n2\n3\n4\n5"
+          }
+        ]
+      }
+    ]
+  }
+]

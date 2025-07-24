@@ -1,240 +1,197 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
+import fs from "fs";
+import path from "path";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  // Create user
-  const user = await prisma.user.upsert({
-    where: { email: 'test@example.com' },
+  const filePath = path.join(__dirname, "seed-data.json");
+  const rawData = fs.readFileSync(filePath, "utf-8");
+  const tracks = JSON.parse(rawData);
+
+  await prisma.user.upsert({
+    where: { email: 'JohnDoe@example.com' },
     update: {},
     create: {
-      email: 'test@example.com',
-      name: 'Test User',
+      email: 'JohnDoe@example.com',
+      name: 'John Doe',
     },
   });
 
-  // Create TypeScript track
-  const tsTrack = await prisma.track.create({
-    data: {
-      name: 'TypeScript',
-      slug: 'typescript',
-      language: 'typescript',
-      description: 'Learn TypeScript from the ground up!',
-      order: 1,
-      paradigms: ['declarative', 'functional', 'object_oriented'], // example paradigms
-    },
-  });
-
-  // TypeScript lessons
-  const tsLesson1 = await prisma.lesson.create({
-    data: {
-      trackId: tsTrack.id,
-      title: 'Variables and Constants',
-      description: 'Introduction to let, const, and var',
-      content: `
-In this lesson, you'll learn how to declare variables using \`let\` and \`const\`.
-      `,
-      order: 1,
-    },
-  });
-
-  const tsLesson2 = await prisma.lesson.create({
-    data: {
-      trackId: tsTrack.id,
-      title: 'Functions',
-      description: 'Learn how to write functions in TypeScript.',
-      content: `
-In this lesson, you'll define and call functions using TypeScript syntax.
-      `,
-      order: 2,
-    },
-  });
-
-  // TypeScript challenges
-  const tsChallenge1 = await prisma.challenge.create({
-    data: {
-      trackId: tsTrack.id,
-      lessonId: tsLesson1.id,
-      title: 'Declare a variable',
-      prompt: `Declare a variable called \`greeting\` with the value "Hello, world!"`,
-      starterCode: `// your code here`,
-      difficulty: 'easy',
-      order: 1,
-      language: 'typescript',
-      testCases: {
-        create: {
-          input: '',
-          expectedOutput: 'Hello, world!',
-        },
+  for (const track of tracks) {
+    await prisma.track.upsert({
+      where: { id: track.id },
+      update: {
+        name: track.name,
+        slug: track.slug,
+        language: track.language,
+        description: track.description,
+        order: track.order,
+        paradigms: track.paradigms,
       },
-    },
-  });
-
-  const tsChallenge2 = await prisma.challenge.create({
-    data: {
-      trackId: tsTrack.id,
-      lessonId: tsLesson1.id,
-      title: 'Use const keyword',
-      prompt: `Use \`const\` to declare a variable \`pi\` with the value 3.14.`,
-      starterCode: `// your code here`,
-      difficulty: 'easy',
-      order: 2,
-      language: 'typescript',
-      testCases: {
-        create: {
-          input: '',
-          expectedOutput: '3.14',
-        },
+      create: {
+        id: track.id,
+        name: track.name,
+        slug: track.slug,
+        language: track.language,
+        description: track.description,
+        order: track.order,
+        paradigms: track.paradigms,
       },
-    },
-  });
+    });
 
-  const tsChallenge3 = await prisma.challenge.create({
-    data: {
-      trackId: tsTrack.id,
-      lessonId: tsLesson2.id,
-      title: 'Write a function',
-      prompt: `Write a function \`add(a, b)\` that returns the sum of a and b.`,
-      starterCode: `function add(a: number, b: number) {\n  // your code here\n}`,
-      difficulty: 'medium',
-      order: 1,
-      language: 'typescript',
-      testCases: {
-        create: {
-          input: '2, 3',
-          expectedOutput: '5',
-        },
-      },
-    },
-  });
+    if (track.lessons) {
+      for (const lesson of track.lessons) {
+        await prisma.lesson.upsert({
+          where: { id: lesson.id },
+          update: {
+            title: lesson.title,
+            description: lesson.description,
+            content: lesson.content,
+            order: lesson.order,
+          },
+          create: {
+            id: lesson.id,
+            title: lesson.title,
+            description: lesson.description,
+            content: lesson.content,
+            order: lesson.order,
+            trackId: track.id,
+          },
+        });
 
-  // Create JavaScript track with paradigms
-  const jsTrack = await prisma.track.create({
-    data: {
-      name: 'JavaScript',
-      slug: 'javascript',
-      language: 'javascript',
-      description: 'Master JavaScript fundamentals and beyond.',
-      order: 2,
-      paradigms: ['imperative', 'functional', 'object_oriented', 'procedural'],
-    },
-  });
+        if (lesson.challenges) {
+          for (const challenge of lesson.challenges) {
+            await prisma.challenge.upsert({
+              where: { id: challenge.id },
+              update: {
+                title: challenge.title,
+                prompt: challenge.prompt,
+                starterCode: challenge.starterCode,
+                difficulty: challenge.difficulty,
+                order: challenge.order,
+                language: challenge.language,
+              },
+              create: {
+                id: challenge.id,
+                title: challenge.title,
+                prompt: challenge.prompt,
+                starterCode: challenge.starterCode,
+                difficulty: challenge.difficulty,
+                order: challenge.order,
+                language: challenge.language,
+                trackId: track.id,
+                lessonId: lesson.id,
+              },
+            });
 
-  // JavaScript lessons
-  const jsLesson1 = await prisma.lesson.create({
-    data: {
-      trackId: jsTrack.id,
-      title: 'Basic Syntax',
-      description: 'Learn JavaScript syntax basics including variables and data types.',
-      content: `
-This lesson covers variables (var, let, const), data types, and simple expressions.
-      `,
-      order: 1,
-    },
-  });
+            if (challenge.testCases) {
+              for (const tc of challenge.testCases) {
+                await prisma.testCase.upsert({
+                  where: { id: tc.id },
+                  update: {
+                    input: tc.input,
+                    expectedOutput: tc.expectedOutput,
+                  },
+                  create: {
+                    id: tc.id,
+                    input: tc.input,
+                    expectedOutput: tc.expectedOutput,
+                    challengeId: challenge.id,
+                  },
+                });
+              }
+            }
 
-  const jsLesson2 = await prisma.lesson.create({
-    data: {
-      trackId: jsTrack.id,
-      title: 'Control Flow',
-      description: 'If statements, loops, and conditional logic in JavaScript.',
-      content: `
-You will learn about \`if\`, \`else\`, \`switch\`, \`for\`, and \`while\` loops.
-      `,
-      order: 2,
-    },
-  });
+            if (challenge.solutions) {
+              for (const sol of challenge.solutions) {
+                await prisma.solution.upsert({
+                  where: { id: sol.id },
+                  update: {
+                    code: sol.code,
+                  },
+                  create: {
+                    id: sol.id,
+                    code: sol.code,
+                    challengeId: challenge.id,
+                  },
+                });
+              }
+            }
+          }
+        }
+      }
+    }
 
-  // JavaScript challenges
-  const jsChallenge1 = await prisma.challenge.create({
-    data: {
-      trackId: jsTrack.id,
-      lessonId: jsLesson1.id,
-      title: 'Declare a variable with var',
-      prompt: `Declare a variable named \`name\` using \`var\` and assign it your name.`,
-      starterCode: `// your code here`,
-      difficulty: 'easy',
-      order: 1,
-      language: 'javascript',
-      testCases: {
-        create: {
-          input: '',
-          expectedOutput: 'Your Name', // replace with expected string for tests
-        },
-      },
-    },
-  });
+    if (track.challenges) {
+      for (const challenge of track.challenges) {
+        await prisma.challenge.upsert({
+          where: { id: challenge.id },
+          update: {
+            title: challenge.title,
+            prompt: challenge.prompt,
+            starterCode: challenge.starterCode,
+            difficulty: challenge.difficulty,
+            order: challenge.order,
+            language: challenge.language,
+            lessonId: challenge.lessonId || null,
+          },
+          create: {
+            id: challenge.id,
+            title: challenge.title,
+            prompt: challenge.prompt,
+            starterCode: challenge.starterCode,
+            difficulty: challenge.difficulty,
+            order: challenge.order,
+            language: challenge.language,
+            trackId: track.id,
+            lessonId: challenge.lessonId || null,
+          },
+        });
 
-  const jsChallenge2 = await prisma.challenge.create({
-    data: {
-      trackId: jsTrack.id,
-      lessonId: jsLesson2.id,
-      title: 'Write a for loop',
-      prompt: `Write a \`for\` loop that counts from 1 to 5 and logs each number.`,
-      starterCode: `// your code here`,
-      difficulty: 'medium',
-      order: 1,
-      language: 'javascript',
-      testCases: {
-        create: {
-          input: '',
-          expectedOutput: '1\n2\n3\n4\n5', // assuming output is newline separated
-        },
-      },
-    },
-  });
+        if (challenge.testCases) {
+          for (const tc of challenge.testCases) {
+            await prisma.testCase.upsert({
+              where: { id: tc.id },
+              update: {
+                input: tc.input,
+                expectedOutput: tc.expectedOutput,
+              },
+              create: {
+                id: tc.id,
+                input: tc.input,
+                expectedOutput: tc.expectedOutput,
+                challengeId: challenge.id,
+              },
+            });
+          }
+        }
 
-  // Create progress for the user on all challenges
-  await prisma.progress.createMany({
-    data: [
-      // TypeScript progress
-      {
-        userId: user.id,
-        challengeId: tsChallenge1.id,
-        status: 'completed',
-      },
-      {
-        userId: user.id,
-        challengeId: tsChallenge2.id,
-        status: 'in_progress',
-      },
-      {
-        userId: user.id,
-        challengeId: tsChallenge3.id,
-        status: 'not_started',
-      },
-      // JavaScript progress
-      {
-        userId: user.id,
-        challengeId: jsChallenge1.id,
-        status: 'not_started',
-      },
-      {
-        userId: user.id,
-        challengeId: jsChallenge2.id,
-        status: 'not_started',
-      },
-    ],
-  });
+        if (challenge.solutions) {
+          for (const sol of challenge.solutions) {
+            await prisma.solution.upsert({
+              where: { id: sol.id },
+              update: {
+                code: sol.code,
+              },
+              create: {
+                id: sol.id,
+                code: sol.code,
+                challengeId: challenge.id,
+              },
+            });
+          }
+        }
+      }
+    }
+  }
 
-  // Create a solution for TypeScript challenge1
-  await prisma.solution.create({
-    data: {
-      userId: user.id,
-      challengeId: tsChallenge1.id,
-      code: `const greeting = "Hello, world!";`,
-    },
-  });
-
-  console.log('Seed complete!');
+  console.log("✅ Seeding completed successfully!");
 }
 
 main()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error(e);
-    await prisma.$disconnect();
+  .catch((e) => {
+    console.error("❌ Error seeding data:", e);
     process.exit(1);
-  });
+  })
+  .finally(() => prisma.$disconnect());

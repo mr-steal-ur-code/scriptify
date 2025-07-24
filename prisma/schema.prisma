@@ -153,12 +153,12 @@ model TestCase {
 
 model Solution {
   id          String   @id @default(cuid())
-  userId      String
+  userId      String?
   challengeId String
   code        String
   createdAt   DateTime @default(now())
 
-  user      User      @relation(fields: [userId], references: [id])
+  user      User?     @relation(fields: [userId], references: [id])
   challenge Challenge @relation(fields: [challengeId], references: [id])
 }
 
