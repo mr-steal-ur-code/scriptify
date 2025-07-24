@@ -35,9 +35,9 @@ export function SigninButtons() {
 					aria-label={`Sign in with ${provider?.name}`}
 					className={`cursor-pointer w-full flex items-center justify-center gap-3 py-3 px-4 rounded-md font-semibold transition-colors duration-200 ${
 						provider?.id === "github"
-							? "bg-slate-800 hover:bg-slate-700 text-white"
+							? "bg-slate-700 hover:bg-slate-800 text-white"
 							: provider?.id === "google"
-							? "bg-blue-600 hover:bg-blue-500 text-white"
+							? "bg-white hover:bg-gray-300 text-gray-900"
 							: "bg-gray-300 hover:bg-gray-400 text-gray-900"
 					}`}
 				>
